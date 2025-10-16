@@ -36,29 +36,31 @@
 ---
 
 ## ⚙️ Step 1. Minikube 클러스터 설치 및 실행
-
+````
 minikube start --driver=docker
 kubectl get nodes
-
+````
 
 ✅ 노드가 Ready 상태면 성공.
 
 ## 🧱 Step 2. Docker 이미지 빌드 및 푸시
 1️⃣ 로컬 빌드
+````
 docker build -t spring-app:v1 .
 docker run -p 8080:8080 spring-app:v1
-
+````
 2️⃣ Docker Hub 푸시
+````
 docker tag spring-app:v1 username/spring-app:v1
 docker push username/spring-app:v1
-
+````
 
 ⚠️ Kubernetes는 레지스트리에서 이미지를 Pull하므로 docker push 필수.
 
 ## ☸️ Step 3. Deployment 생성
 
 deployment.yaml
-
+````
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -78,17 +80,18 @@ spec:
           image: username/spring-app:v3
           ports:
             - containerPort: 8080
-
+````
+````
 kubectl apply -f deployment.yaml
 kubectl get pods
-
+````
 
 ✅ 모든 Pod 상태가 Running이면 성공.
 
 ## 🌐 Step 4. LoadBalancer Service 생성
 
 service.yaml
-
+````
 apiVersion: v1
 kind: Service
 metadata:
@@ -100,13 +103,16 @@ spec:
   ports:
     - port: 80
       targetPort: 8080
-
+````
+````
 kubectl apply -f service.yaml
+````
 
 ## 🚇 Step 5. 외부 접속 (Minikube Tunnel)
+````
 minikube tunnel
 kubectl get svc spring-app-service
-
+````
 
 EXTERNAL-IP이 <pending> → 192.168.xx.xx 등으로 바뀌면 성공
 
@@ -116,24 +122,29 @@ curl http://192.168.49.2
 
 ## 🔄 Step 6. 롤링 업데이트 & 롤백
 이미지 업데이트
+````
 kubectl set image deployment/spring-app spring-app=username/spring-app:v3
 kubectl rollout status deployment/spring-app
+````
 
 롤백
+````
 kubectl rollout undo deployment/spring-app
-
+````
 
 ⚠️ 동일 태그(v3)를 덮어쓰면 롤백해도 내용은 동일할 수 있음.
 실제 버전별로는 v1, v2, v3처럼 고유 태그를 써야 정확히 관리 가능.
 
 ## 🔍 Step 7. 상태 점검 명령어 요약
 목적	명령어
+````
 Deployment 상태 확인	kubectl get deploy spring-app -o wide
 Pod 목록 및 노드 위치	kubectl get pods -o wide
 Service 상태	kubectl get svc spring-app-service
 상세 이벤트 로그	kubectl describe deployment spring-app
 Pod 로그 보기	kubectl logs -f <pod-name>
 리비전 이력 확인	kubectl rollout history deployment/spring-app
+````
 ## 🧠 Step 8. 네트워크 및 포트 원리 요약
 
 Pod → 컨테이너가 실제 애플리케이션을 실행
