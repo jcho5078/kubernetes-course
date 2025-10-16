@@ -5,6 +5,12 @@ metadata:
 spec:
   selector:
     app: spring-app
+  #ports:
+  #  - name: http
+  #    port: 80
+  #    targetPort: 8080
+  #    nodePort: 30007
+  #type: LoadBalancer
   ports:
     - name: http
       port: 80
