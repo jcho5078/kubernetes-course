@@ -1,0 +1,21 @@
+
+spring:
+  application:
+    mode: dev
+    version: v1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      readinessstate:
+        enabled: true
+
+env:
+  product-host: ${PRODUCT_HOST}

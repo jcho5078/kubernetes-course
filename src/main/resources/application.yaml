@@ -1,8 +1,0 @@
-
-spring:
-  application:
-    mode: ${APP_MODE:dev}
-    version: ${APP_VERSION:v0}
-  datasource:
-    username: ${DB_USER}
-    password: ${DB_PASS}

@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1 # 올바른 Ingress API 버전
+kind: Ingress
+metadata:
+  name: path-based-router
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    
+    # 요청된 경로(/user, /product)를 제거하고 나머지 경로만 백엔드에 전달
+    # 예: /user/info 요청 -> user-app-service에는 /info 요청으로 전달
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx # 사용 중인 Ingress Controller 클래스
+  rules:
+    - host: localhost # 단일 도메인
+      http:
+        paths:
+          # 1. /user 경로 라우팅
+          - path: /user(/|$)(.*) # 정규식을 사용하여 /user 뒤의 모든 경로를 캡쳐
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: user-app-service # User Service로 전달
+                port:
+                  number: 80
+          # 2. /product 경로 라우팅
+          - path: /product(/|$)(.*) # 정규식을 사용하여 /product 뒤의 모든 경로를 캡쳐
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: product-app-service # Product Service로 전달
+                port:
+                  number: 80
