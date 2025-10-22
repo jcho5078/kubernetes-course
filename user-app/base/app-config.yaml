@@ -1,0 +1,9 @@
+# app-config.yaml (일반 설정)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config # ConfigMap 이름
+data:
+  # Spring 설정에 필요한 일반 환경 변수
+  APP_MODE: "prod"
+  APP_VERSION: "v2.0"

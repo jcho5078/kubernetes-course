@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+  - ../../base
+
+# Base의 'app-config' Generator 내용을 덮어씁니다.
+configMapGenerator:
+  - name: app-config
+    behavior: replace # Base ConfigMap Generator의 내용을 덮어쓰도록 명시
+    literals:
+      - APP_MODE=dev     # 운영(prod) 대신 개발(dev) 모드 설정
+      - APP_VERSION=v2.1.0-dev # 버전 정보도 개발용으로 변경
+
+patches:
+  - path: /patch-replicas.yaml
+    target:
+      kind: Deployment
+      name: user-app

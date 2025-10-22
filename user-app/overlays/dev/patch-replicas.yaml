@@ -1,0 +1,9 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-app # **Base 리소스의 name과 kind가 반드시 일치해야 합니다!**
+spec:
+  replicas: 1 # 이 필드만 2에서 1로 덮어씁니다.(정의된 파일만)
+  selector:
+    matchLabels:
+      app: user-app

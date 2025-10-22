@@ -1,8 +1,8 @@
 
 spring:
   application:
-    mode: dev
-    version: v1
+    mode: ${APP_MODE}
+    version: ${APP_VERSION}
 
 management:
   endpoints:
@@ -18,4 +18,5 @@ management:
         enabled: true
 
 env:
-  product-host: ${PRODUCT_HOST}
+  app-mod: ${APP_MODE}
+  app-version: ${APP_VERSION}

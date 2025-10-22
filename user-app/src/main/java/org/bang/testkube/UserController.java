@@ -29,7 +29,9 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public String testUser(HttpServletRequest request) {
+    public String testUser(HttpServletRequest request
+        , @Value("${spring.application.mode}") String mode
+        , @Value("${spring.application.version}") String version) {
 
         // 1. 요청할 URI 구성 (ClusterIP Service 이름 사용)
         // Service 이름: product-app-service
@@ -41,10 +43,11 @@ public class UserController {
         // WebClient는 URI Builder를 내부에 가지고 있어, RestTemplate처럼 복잡하게 URI 객체를 만들 필요가 없습니다.
         String result;
         String requestHost = request.getParameter("product_host");
+        if(requestHost == null) requestHost = PRODUCT_SERVICE_HOST;
 
         // product-app-service 로 요청하면 ingress에서 설정한 경로인 localhost/product 로 요청한것과 같고
         // requestUrl는 product-app-service/product 로 요청하게 되는 것.
-        String requestUrl = "http://"+requestHost+"/product?product_id=" + product;
+        String requestUrl = "http://"+requestHost+"?product_id=" + product;
 
         log.info("Request Host: {}", requestUrl);
 
@@ -65,6 +68,6 @@ public class UserController {
             e.printStackTrace();
         }
 
-        return "Hello :" + request.getParameter("user_nm") + " : " + result;
+        return "Hello : (" + mode + " : " + version + ") "  + request.getParameter("user_nm") + " : " + result;
     }
 }
