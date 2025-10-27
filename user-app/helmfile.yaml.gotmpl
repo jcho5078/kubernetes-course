@@ -1,0 +1,23 @@
+# ================================
+# Helmfile 환경 정의
+# ================================
+environments:
+  dev:
+    values:
+      - ./user-app/values-dev.yaml
+  prod:
+    values:
+      - ./user-app/values-prod.yaml
+
+---
+
+# ================================
+# Helmfile 릴리스 정의
+# ================================
+releases:
+  - name: user-app
+    namespace: {{ .Environment.Name }}
+    chart: ./user-app
+    values:
+      - ./user-app/values.yaml
+      - {{ readFile (printf "./user-app/values-%s.yaml" .Environment.Name) | fromYaml }}

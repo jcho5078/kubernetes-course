@@ -1,0 +1,17 @@
+# 기존 ingress 삭제 후, helm upgrade --install user-app-dev ./user-app -f ./user-app/values-dev.yaml
+replicaCount: 1
+
+#image:
+#  tag: dev-latest
+
+service:
+  type: NodePort
+  port: 8080
+
+config:
+ SPRING_PROFILES_ACTIVE: "dev"
+ SPRING_DATASOURCE_URL: "jdbc:mysql://dev-db:3306/userdb"
+ SPRING_DATASOURCE_USERNAME: "dev_user"
+
+secrets:
+  SPRING_DATASOURCE_PASSWORD: "dev_pass"

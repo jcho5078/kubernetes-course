@@ -1,8 +1,8 @@
 
 spring:
   application:
-    mode: ${APP_MODE}
-    version: ${APP_VERSION}
+    mode: ${APP_MODE:dev}
+    version: ${APP_VERSION:v1}
 
 management:
   endpoints:
@@ -16,7 +16,3 @@ management:
         enabled: true
       readinessstate:
         enabled: true
-
-env:
-  app-mod: ${APP_MODE}
-  app-version: ${APP_VERSION}
