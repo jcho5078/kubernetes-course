@@ -7,11 +7,15 @@ replicaCount: 1
 service:
   type: NodePort
   port: 8080
+  nodePort: 30080
 
 config:
- SPRING_PROFILES_ACTIVE: "dev"
- SPRING_DATASOURCE_URL: "jdbc:mysql://dev-db:3306/userdb"
- SPRING_DATASOURCE_USERNAME: "dev_user"
+  SPRING_PROFILES_ACTIVE: "dev"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://dev-db:3306/userdb"
+  SPRING_DATASOURCE_USERNAME: "dev_user"
 
 secrets:
   SPRING_DATASOURCE_PASSWORD: "dev_pass"
+
+ingress:
+  enabled: false

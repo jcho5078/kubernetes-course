@@ -1,0 +1,24 @@
+environments:
+  dev:
+    values:
+      - env: dev
+  prod:
+    values:
+      - env: prod
+
+---
+
+releases:
+  - name: user-app-{{ .Environment.Values.env }}
+    namespace: {{ .Environment.Values.env }}
+    chart: ./user-app
+    values:
+      - ./user-app/values.yaml
+      - ./user-app/values-{{ .Environment.Values.env }}.yaml
+
+  - name: product-app-{{ .Environment.Values.env }}
+    namespace: {{ .Environment.Values.env }}
+    chart: ./product-app
+    values:
+      - ./product-app/values.yaml
+      - ./product-app/values-{{ .Environment.Values.env }}.yaml

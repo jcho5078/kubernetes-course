@@ -19,7 +19,7 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     // 🚨 ClusterIP Service 이름은 변하지 않으므로 final로 선언
-    private static final String PRODUCT_SERVICE_HOST = "product-app-service";
+    private static final String PRODUCT_SERVICE_HOST = "localhost";
 
     private final WebClient webClient;
 
@@ -45,8 +45,7 @@ public class UserController {
         String requestHost = request.getParameter("product_host");
         if(requestHost == null) requestHost = PRODUCT_SERVICE_HOST;
 
-        // product-app-service 로 요청하면 ingress에서 설정한 경로인 localhost/product 로 요청한것과 같고
-        // requestUrl는 product-app-service/product 로 요청하게 되는 것.
+        // 다른 서비스에 통신할 url 설정 (기본 localhost)
         String requestUrl = "http://"+requestHost+"?product_id=" + product;
 
         log.info("Request Host: {}", requestUrl);

@@ -1,0 +1,50 @@
+name: Deploy to Minikube via Helmfile (NodePort only)
+
+on:
+  push:
+    branches:
+      - main    # main 브랜치 push 시 자동 배포
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+
+    steps:
+      # 1️⃣ 저장소 체크아웃
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Helm 설치
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.14.4
+
+      # 3️⃣ Helmfile 설치
+      - name: Install Helmfile
+        run: choco install helmfile -y
+
+      # 4️⃣ Minikube 세팅 (Docker driver)
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@master
+        with:
+          driver: docker
+          kubernetes-version: v1.30.0
+
+      # 5️⃣ 클러스터 준비 (Ingress 없이 NodePort 사용)
+      - name: Prepare K8s Cluster
+        run: |
+          kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
+          echo "✅ Namespace dev ready (NodePort only, no ingress controller)"
+
+      # 6️⃣ Helmfile sync 실행 (dev 환경)
+      - name: Deploy Helmfile
+        run: |
+          helmfile -e dev sync
+          echo "✅ Helmfile sync completed successfully."
+
+      # 7️⃣ NodePort 서비스 확인
+      - name: Show NodePort Info
+        run: |
+          kubectl get svc -n dev
+          echo "✅ Copy the NodePort from above and open: http://localhost:<nodeport>"

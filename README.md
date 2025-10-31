@@ -34,11 +34,51 @@ helm upgrade --install product-app-prod ./product-app \
 
 ## 쉘스크립트
 
-````
+````[helmfile.yaml.gotmpl](helmfile.yaml.gotmpl)
 helm-upgrade.sh
 ````
 
 ## 확인
 ````
 helm list --all-namespaces
+````
+
+
+# 프로젝트 jar파일 삭제 후 helmfile을 이용한 배포
+
+````
+helmfile -e dev sync
+
+helmfile -e prod sync
+````
+
+# 적용 helmfile 내용 확인
+
+````
+helmfile -e dev template > render.yaml
+
+# 생성된 render.yaml 확인 
+````
+
+# 윈도우환경 minikube 각 서비스 접속(name space 'dev' 기준)
+````
+minikube service user-app-dev -n dev
+minikube service product-app-dev -n dev
+````
+
+# user-app 에서 브라우저 접근
+
+product-app 사용 service : product-app-dev
+
+namespace : dev
+
+service host : localhost
+
+접근 port : 8080
+
+최종 포드 접근 URL : product-app-dev.dev.svc.cluster.local:8080
+
+- user-app 접근 pod 통신 url
+````
+http://127.0.0.1:57747/?user_nm=tom&product_id=pro-123&product_host=product-app-dev.dev.svc.cluster.local:8080
 ````
