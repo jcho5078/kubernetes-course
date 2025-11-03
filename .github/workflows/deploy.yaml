@@ -3,11 +3,11 @@ name: Deploy to Minikube via Helmfile (NodePort only)
 on:
   push:
     branches:
-      - main    # main 브랜치 push 시 자동 배포
+      - master    # main 브랜치 push 시 자동 배포
 
 jobs:
   deploy:
-    runs-on: windows-latest
+    runs-on: runner
 
     steps:
       # 1️⃣ 저장소 체크아웃
