@@ -27,15 +27,16 @@ jobs:
           }
 
           # Helmfile 확인
-          if (-not (Get-Command helmfile -ErrorAction SilentlyContinue)) {
-            Write-Host "🛠️ Helmfile not found. Installing..."
-            Invoke-WebRequest -Uri https://github.com/helmfile/helmfile/releases/latest/download/helmfile_Windows_amd64.tar.gz -OutFile helmfile.tar.gz
-            tar -xzf helmfile.tar.gz
-            Move-Item helmfile.exe "C:\Program Files\Helmfile\helmfile.exe" -Force
-            $env:Path += ";C:\Program Files\Helmfile"
-            Write-Host "✅ Helmfile installed successfully."
+          if (Get-Command helmfile -ErrorAction SilentlyContinue) {
+              Write-Host "✅ Helmfile present: $(helmfile --version)"
           } else {
-            Write-Host "✅ Helmfile already installed: $(helmfile --version)"
+            Write-Host "🛠️ Installing Helmfile..."
+            $url = "https://github.com/helmfile/helmfile/releases/latest/download/helmfile_windows_amd64.exe"
+            $target = "C:\Program Files\Helmfile\helmfile.exe"
+            New-Item -ItemType Directory -Force -Path "C:\Program Files\Helmfile" | Out-Null
+            Invoke-WebRequest -Uri $url -OutFile $target
+            Write-Host "✅ Helmfile downloaded successfully."
+            echo "C:\Program Files\Helmfile" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           }
 
       # ✅ Helmfile sync 실행 (dev 환경)
