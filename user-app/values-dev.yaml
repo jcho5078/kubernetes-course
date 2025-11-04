@@ -10,6 +10,8 @@ service:
   nodePort: 30080
 
 config:
+  APP_MODE: "DEV"
+  APP_VERSION: "0.1"
   SPRING_PROFILES_ACTIVE: "dev"
   SPRING_DATASOURCE_URL: "jdbc:mysql://dev-db:3306/userdb"
   SPRING_DATASOURCE_USERNAME: "dev_user"
