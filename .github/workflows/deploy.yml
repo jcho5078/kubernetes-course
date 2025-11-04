@@ -30,13 +30,7 @@ jobs:
           if (Get-Command helmfile -ErrorAction SilentlyContinue) {
               Write-Host "✅ Helmfile present: $(helmfile --version)"
           } else {
-            Write-Host "🛠️ Installing Helmfile..."
-            $url = "https://github.com/helmfile/helmfile/releases/latest/download/helmfile_windows_amd64.exe"
-            $target = "C:\Program Files\Helmfile\helmfile.exe"
-            New-Item -ItemType Directory -Force -Path "C:\Program Files\Helmfile" | Out-Null
-            Invoke-WebRequest -Uri $url -OutFile $target
-            Write-Host "✅ Helmfile downloaded successfully."
-            echo "C:\Program Files\Helmfile" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+            Write-Host "ERROR: Helmfile not installed or cant find"
           }
 
       # ✅ Helmfile sync 실행 (dev 환경)
