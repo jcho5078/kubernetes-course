@@ -3,48 +3,51 @@ name: Deploy to Minikube via Helmfile (NodePort only)
 on:
   push:
     branches:
-      - master    # main 브랜치 push 시 자동 배포
+      - master    # master 브랜치 push 시 자동 배포
 
 jobs:
   deploy:
-    runs-on: runner
+    runs-on: windows-latest    # ✅ Windows 환경 지정
 
     steps:
-      # 1️⃣ 저장소 체크아웃
+      # ✅ 저장소 체크아웃
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Helm 설치
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.14.4
-
-      # 3️⃣ Helmfile 설치
-      - name: Install Helmfile
-        run: choco install helmfile -y
-
-      # 4️⃣ Minikube 세팅 (Docker driver)
-      - name: Start Minikube
-        uses: medyagh/setup-minikube@master
-        with:
-          driver: docker
-          kubernetes-version: v1.30.0
-
-      # 5️⃣ 클러스터 준비 (Ingress 없이 NodePort 사용)
-      - name: Prepare K8s Cluster
+      # ✅ Helm & Helmfile 설치 확인 (없으면 설치)
+      - name: Ensure Helm and Helmfile Installed
+        shell: pwsh
         run: |
-          kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
-          echo "✅ Namespace dev ready (NodePort only, no ingress controller)"
+          # Helm 확인
+          if (-not (Get-Command helm -ErrorAction SilentlyContinue)) {
+            Write-Host "🛠️ Helm not found. Installing via Chocolatey..."
+            choco install kubernetes-helm -y
+          } else {
+            Write-Host "✅ Helm already installed: $(helm version --short)"
+          }
 
-      # 6️⃣ Helmfile sync 실행 (dev 환경)
+          # Helmfile 확인
+          if (-not (Get-Command helmfile -ErrorAction SilentlyContinue)) {
+            Write-Host "🛠️ Helmfile not found. Installing..."
+            Invoke-WebRequest -Uri https://github.com/helmfile/helmfile/releases/latest/download/helmfile_Windows_amd64.tar.gz -OutFile helmfile.tar.gz
+            tar -xzf helmfile.tar.gz
+            Move-Item helmfile.exe "C:\Program Files\Helmfile\helmfile.exe" -Force
+            $env:Path += ";C:\Program Files\Helmfile"
+            Write-Host "✅ Helmfile installed successfully."
+          } else {
+            Write-Host "✅ Helmfile already installed: $(helmfile --version)"
+          }
+
+      # ✅ Helmfile sync 실행 (dev 환경)
       - name: Deploy Helmfile
+        shell: pwsh
         run: |
           helmfile -e dev sync
-          echo "✅ Helmfile sync completed successfully."
+          Write-Host "✅ Helmfile sync completed successfully."
 
-      # 7️⃣ NodePort 서비스 확인
+      # ✅ NodePort 서비스 확인
       - name: Show NodePort Info
+        shell: pwsh
         run: |
           kubectl get svc -n dev
-          echo "✅ Copy the NodePort from above and open: http://localhost:<nodeport>"
+          Write-Host "✅ Copy the NodePort from above and open: http://localhost:<nodeport>"
